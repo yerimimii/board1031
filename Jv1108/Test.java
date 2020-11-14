@@ -24,7 +24,7 @@ public class Test {
   		  게시물 bb = ArticleList.get(i);
   		  if(aid == bb.getId()) {
   			  existFlag = 2;
-  			  index = 1;
+  			  index = i;
   		  }
 	   }
 		return index;
@@ -134,7 +134,7 @@ public class Test {
 	    		  aa.setHit(targetHit + 1);
 	    		  printArticle(aa);
 	    		  while(true) {
-	    			  System.out.print("상세보기 기능을 선택해주세요(1. 댓글 등록, 2. 좋아요, 3.수정, 4. 삭제, 5. 목록으로");
+	    			  System.out.print("상세보기 기능을 선택해주세요(1. 댓글 등록, 2. 좋아요, 3.수정, 4. 삭제, 5. 목록으로) ");
 	    			  int rCmdNo = Integer.parseInt(sc.nextLine());
 	    			  
 	    			  if (rCmdNo == 1) {
@@ -163,13 +163,28 @@ public class Test {
 	    	   }	    	  
 	      }
 	      if(cmd.equals("search")) {
-	    	  System.out.print("검색 키워드를 입력해 주세요: ");
+	    	  System.out.print("검색 항목을 입력해주세요 (1. 제목, 2. 내용, 3. 제목 + 내용, 4. 작성자) ");
+	    	  int searchTarget = Integer.parseInt(sc.nextLine());
+	    	  
+	    	  System.out.print("검색 키워드를 입력해주세요 :" );
 	    	  String keyword = sc.nextLine();
+	    	  
 	    	  for(int i = 0; i < ArticleList.size(); i++) {
 			        게시물 aa = ArticleList.get(i);
-			        String title = aa.getTitle();
+			        String targetStr = aa.getTitle();
+			        targetStr = " ";
+			        if(searchTarget == 1) {
+			        	
+			        } else if (searchTarget == 2) {
+			        	
+			        } else if (searchTarget == 3) {
+			        	
+			        } else {
+			        	
+			        }
 			        
-			        if(title.contains(keyword)) {
+			        
+			        if(targetStr.contains(keyword)) {
 			        	System.out.println(" 번호 : " + aa.getId());
 					    System.out.println(" 제목 : " + aa.getTitle());
 					    System.out.println(" 등록날짜 : " + aa.getRegDate());
