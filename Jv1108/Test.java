@@ -4,11 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
+import Jv1108.Test.게시물;
+
 public class Test {
-	static ArrayList<게시물> ArticleList = new ArrayList<>();
-	static ArrayList<Reply> ReplyList = new ArrayList<>();
 	
-	public static void printArticle (게시물 aa){
+	static ArrayList<Member> MemberList = new ArrayList<>();
+	
+	public static void printArticle (Article aa){
 		System.out.println("번호 : " + aa.getId());
 		System.out.println("제목 : " + aa.getTitle());
 	    System.out.println("내용 : " + aa.getBody());
@@ -16,12 +18,27 @@ public class Test {
 	    System.out.println("조회수 : " + aa.getHit());
 	    System.out.println("작성자 : " + aa.getWriter());
 	    System.out.println("======================");
+	    System.out.println("---------댓글---------");
+	    for(int i = 0; i < ReplyList.size(); i++) {
+	    	Reply re = ReplyList.get(i);
+	    	if(re.getParentId() == aa.getId()) {
+				System.out.println("내용 : " + re.getBody());
+	        }
+	    }
 	}
+////	public static void makeTestData(){
+//	게시물 게시물a = new 게시물(1,"안녕하세요","반갑습니다.",time1);
+//	게시물 게시물b = new 게시물(2,"제목2","내용2",time1);
+//	게시물 게시물c = new 게시물(3,"제목3","내용3",time1);
+//	ArticleList.add(게시물a);
+//	ArticleList.add(게시물b);
+//	ArticleList.add(게시물c);	
+////	}
 	public static int getArticleIndexById(int aid) {
 		int existFlag = 1;
 		int index = -1; // 없
 		for(int i = 0; i < ArticleList.size(); i++) {
-  		  게시물 bb = ArticleList.get(i);
+			Article bb = ArticleList.get(i);
   		  if(aid == bb.getId()) {
   			  existFlag = 2;
   			  index = i;
@@ -31,26 +48,26 @@ public class Test {
 	}
 	
 	public static void main(String[] args){
-//		Date today = new Date ();
-//		System.out.println(today);
-		
-		SimpleDateFormat format1 = new SimpleDateFormat ("yyyy.MM.dd");
-		Date time = new Date();		
-		String time1 = format1.format(time);
+
 		
 		Scanner sc = new Scanner(System.in);
-	    int id = 4;
 	    
-		게시물 게시물a = new 게시물(1,"안녕하세요","반갑습니다.",time1);
-		게시물 게시물b = new 게시물(2,"제목2","내용2",time1);
-		게시물 게시물c = new 게시물(3,"제목3","내용3",time1);
-		ArticleList.add(게시물a);
-		ArticleList.add(게시물b);
-		ArticleList.add(게시물c);
 		
+		
+		ArticleDao articleDao = new ArticleDao();
+		//??
+		ArrayList<Article> ArticleList = new ArrayList<>();
+		
+	
+		Member loginedMember = null;
 		
 		while(true) {
-			System.out.print("명령어를 입력해주세요: ");
+			if(loginedMember == null) {
+				System.out.print("명령어를 입력해주세요:");
+			} else{
+				System.out.print("명령어를 입력해주세요[" + loginedMember.getMemberId() + "(" + loginedMember.getMemberName()+")] :");
+			}
+			
 			String cmd = sc.nextLine();
 			
 			if(cmd.equals("exit")) {
@@ -65,7 +82,7 @@ public class Test {
 				System.out.println("게시물 등록이 완료되었습니다.");
 	            
 	            //게시물 게시물1 = new 게시물(id,title,body,time1);
-	            게시물 게시물1 = new 게시물(id,title,body,time1,0,"익명");
+				Article 게시물1 = new Article(id,title,body,time1,0,"익명");
 				ArticleList.add(게시물1);
 				System.out.printf("%d번글이 생성되었습니다.\n", id);
 				id++;
@@ -73,7 +90,7 @@ public class Test {
 			
 			if(cmd.equals("list")) {
 				for(int i = 0; i < ArticleList.size(); i++) {
-			        게시물 aa = ArticleList.get(i);
+					Article aa = ArticleList.get(i);
 				    System.out.println(" 번호 : " + aa.getId());
 				    System.out.println(" 제목 : " + aa.getTitle());
 				    System.out.println(" 등록날짜 : " + aa.getRegDate());
@@ -100,7 +117,7 @@ public class Test {
 	    		   System.out.printf("%d번째 게시물 수정이 완료되었습니다.", targetId);
 	    		   System.out.println();
 	    		   
-	    		   게시물 게시물2 = new 게시물(targetId,title,body,time1);
+	    		   Article 게시물2 = new Article(targetId,title,body,time1);
 	    		   
 	    		   ArticleList.set(index,게시물2);
 	    	     }
@@ -129,30 +146,35 @@ public class Test {
 	    	  if(index == -1) {
 	    		  System.out.println("없는 게시물 입니다.");
 	    	  } else {
-	    		  게시물 aa = ArticleList.get(index);
+	    		  Article aa = ArticleList.get(index);
 	    		  int targetHit = aa.getHit();
 	    		  aa.setHit(targetHit + 1);
 	    		  printArticle(aa);
 	    		  while(true) {
-	    			  System.out.print("상세보기 기능을 선택해주세요(1. 댓글 등록, 2. 좋아요, 3.수정, 4. 삭제, 5. 목록으로) ");
+	    			  System.out.print("상세보기 기능을 선택해주세요(1. 댓글 등록, 2. 좋아요, 3.수정, 4. 삭제, 5. 목록으로) :");
 	    			  int rCmdNo = Integer.parseInt(sc.nextLine());
 	    			  
 	    			  if (rCmdNo == 1) {
 	    				  System.out.print("댓글 내용을 입력해주세요 : ");
-	    				  //sc.nextLine()
+	    				  String replyBody = sc.nextLine();
+							Reply re = new Reply(aa.getId(), replyBody, "익명", time1);
+
+							ReplyList.add(re);
+							System.out.println("댓글이 등록되었습니다.");
+
+							printArticle(aa);
 	    			  }
 	    				
-
 	    			  if (rCmdNo == 2) {
-	    				  
+	    				  System.out.println("[좋아요 기능]");
 	    			  }
 
 	    			  if (rCmdNo == 3) {
-	    				  
+	    				  System.out.println("[수정 기능]");
 	    			  }
 
 	    			  if (rCmdNo == 4) {
-	    				  
+	    				  System.out.println("[삭제 기능]");
 	    			  }
 
 	    			  if (rCmdNo == 5) {
@@ -170,19 +192,18 @@ public class Test {
 	    	  String keyword = sc.nextLine();
 	    	  
 	    	  for(int i = 0; i < ArticleList.size(); i++) {
-			        게시물 aa = ArticleList.get(i);
-			        String targetStr = aa.getTitle();
-			        targetStr = " ";
-			        if(searchTarget == 1) {
-			        	
-			        } else if (searchTarget == 2) {
-			        	
-			        } else if (searchTarget == 3) {
-			        	
-			        } else {
-			        	
-			        }
+	    		  Article aa = ArticleList.get(i);
+			        String targetStr;
 			        
+			        if(searchTarget == 1) {
+			        	targetStr = aa.getTitle();
+			        } else if (searchTarget == 2) {
+			        	targetStr = aa.getBody();
+			        } else if (searchTarget == 3) {
+			        	targetStr = aa.getTitle() + aa.getBody();
+			        } else {
+			        	targetStr = aa.getWriter();
+			        }
 			        
 			        if(targetStr.contains(keyword)) {
 			        	System.out.println(" 번호 : " + aa.getId());
@@ -191,95 +212,104 @@ public class Test {
 					    System.out.println(" 조회수 : " + aa.getHit());
 					    System.out.println(" 작성자 : " + aa.getWriter());
 			        }
-	        }
+	    	  }	      
+	      }
+	      if(cmd.equals("signup")) {
+	    	  System.out.println("==== 회원 가입을 진행합니다 ====");
+	    	  System.out.print("이름을 입력해 주세요: ");
+	    	  String memberName = sc.nextLine();
+	    	  System.out.print("아이디를 입력해 주세요: ");
+	    	  String memberId = sc.nextLine();
+	    	  System.out.print("비밀번호를 입력해 주세요: ");
+	    	  String memberPw = sc.nextLine();
+	    	  
+			  Member member = new Member(memberId, memberPw, memberName);
+			  MemberList.add(member);
+			  System.out.println("회원가입이 완료되었습니다.");
+	      }
 	      
-	   }
+	      if(cmd.equals("signin")) {
+	    	  System.out.println("==== 로그인을 진행합니다 ====");
+	    	  System.out.print("아이디: ");
+	    	  String memberId = sc.nextLine();
+	    	  System.out.print("비밀번호: ");
+	    	  String memberPw = sc.nextLine();
+	    	  
+	    	  boolean loginFlag = false; //로그인 성공 여부
+	    	  Member aa = null;
+	    	  for(int i = 0; i < MemberList.size(); i++) {
+	    		  aa = MemberList.get(i); 
+	    		  if(memberId.equals(aa.getMemberId()) && memberPw.equals(aa.getMemberPw())) {
+	    			loginFlag = true;
+	    			break;
+	    		    } 
+	    	   } 
+	    	  //???//
+	    	  if(loginFlag) {
+	    		  System.out.println(aa.getMemberName() + "님 환영합니다.");
+	    		  loginedMember = aa;
+	    		  
+	          } else {
+	    			  System.out.println("비밀번호를 틀렸거나 잘못된 회원정보입니다.");
+	    	  }  
+	      }
+//	      if(cmd.equals("help")) {
+//	    	  System.out.println("article [add: 게시물 추가 / list : 게시물 목록 조회 / read : 게시물 조회 / search : 검색]");
+//	    	  System.out.println("member [signup : 회원가입 / signin : 로그인 / findpass : 비밀번호 찾기 / findid : 아이디 찾기 / logout : 로그아웃 / myinfo : 나의 정보 확인및 수정]");
+//	    	  
+//	    	  boolean loginFlag = false; //로그인 여부
+//	    	  Member aa = null;
+//	    	  for(int i = 0; i < MemberList.size(); i++) {
+//	    		  aa = MemberList.get(i); 
+//	    		  if(memberId.equals(aa.getMemberId()) && memberPw.equals(aa.getMemberPw())) {
+//	    			loginFlag = true;
+//	    			break;
+//	    		    } 
+//	    	  
+//	    	  while(true) {
+//    			  System.out.print("명령어를 입력해주세요: ");
+//    			  String hCmd = sc.nextLine();
+//    			  
+//    			  if (hCmd.equals("article add")) {
+//    				  System.out.print("[게시물 추가]");
+//    			  }
+//    			  if (hCmd.equals("article list")) {
+//    				  System.out.println("[게시물 목록 조회]");
+//    			  }
+//
+//    			  if (hCmd.equals("article read")) {
+//    				  System.out.println("[게시물 조회]");
+//    			  }
+//
+//    			  if (hCmd.equals("article search")) {
+//    				  System.out.println("[검색]");
+//    			  }
+//
+//    			  if (hCmd.equals("member signup")) {
+//    				  System.out.println("[회원가입]");
+//    			  }
+//    			  if (hCmd.equals("member signin")) {
+//    				  System.out.println("[로그인]");
+//    			  }
+//    			  if (hCmd.equals("member findpass")) {
+//    				  System.out.println("[비밀번호찾기]");
+//    			  }
+//    			  if (hCmd.equals("member findid")) {
+//    				  System.out.println("[아이디 찾기]");
+//    			  }
+//    			  if (hCmd.equals("member logout")) {
+//    				  System.out.println("[로그아웃]");
+//    			  }
+//    			  if (hCmd.equals("member myinfo")) {
+//    				  System.out.println("[나의 정보 확인및 수정]");
+//    			  }
+//    			  
+//    		  }
+//    		  
+//    	   }	
+//	      }
+	    }	      
    }
-}
-
-	
-static class 게시물 {
-		  private String title;
-		  private String body;
-		  private int id;
-		  private String writer = "익명";
-		  private int hit; 
-		  private String regDate;
-		  
-		  public 게시물(int id, String title, String body, String regDate) {
-			  this.id = id;
-			  this.title = title;
-			  this.body = body;
-			  this.regDate = regDate;
-		  }
-		  public 게시물(int id, String title, String body, String regDate, int hit, String writer) {
-			  this.id = id;
-			  this.title = title;
-			  this.body = body;
-			  this.regDate = regDate;
-			  this.hit = hit;
-			  this.writer = writer;
-		  }		  
-		  
-		  
-		public String getWriter() {
-			return writer;
-	    }
-		public void setWriter(String writer) {
-			this.writer = writer;
-		}
-		public String getRegDate() {
-			return regDate;
-		}
-		public void setRegDate(String regDate) {
-			this.regDate = regDate;
-		}
-		public int getHit() {
-			return hit;
-		}
-		public void setHit(int hit) {
-			this.hit = hit;
-		}
-		  
-		public String getTitle() {
-			return title;
-		}
-		public void setTitle(String title) {
-			this.title = title;
-		}
-		public String getBody() {
-			return body;
-		}
-		public void setBody(String body) {
-			this.body = body;
-		}
-		public int getId() {
-			return id;
-		}
-		public void setId(int id) {
-			this.id = id;
-		}
-
-		public void 호명(){
-		    System.out.println(" 번호 : " + id);
-		    System.out.println(" 제목 : " + title);
-		    System.out.println(" 등록날짜 : " + regDate);
-		    System.out.println(" 조회수 : " + hit);
-		    System.out.println(" 작성자 : " + writer);
-		    
-		  }
-		
-		  public void 내용보기() {
-			  System.out.println("=======" + id + "번째 게시물 =======");
-			  System.out.println(" 번호 : " + id);
-			  System.out.println(" 날짜 : " + regDate);
-			  System.out.println(" 제목 : " + title);
-			  System.out.println(" 내용 : " + body);
-			  System.out.println(" 조회수 : " + hit);
-			  System.out.println("===========================");
-		  }
-		
-		  }
 
 
 }
