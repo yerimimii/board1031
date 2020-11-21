@@ -1,10 +1,10 @@
 package Jv1108;
 
 public class Member {
-	private String memberId; 
+	private String memberId;
 	private String memberPw;
 	private String memberName;
-	
+
 	public Member(String memberId, String memberPw, String memberName) {
 		super();
 		this.memberId = memberId;
@@ -35,5 +35,5 @@ public class Member {
 	public void setMembwePw(String memberPw) {
 		this.memberPw = memberPw;
 	}
-	
+
 }
