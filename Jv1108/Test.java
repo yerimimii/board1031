@@ -58,7 +58,7 @@ public class Test {
 				System.out.print("게시물 내용을 입력해주세요: ");
 				String body = sc.nextLine();
 				System.out.println("게시물 등록이 완료되었습니다.");
-				Article 게시물1 = new Article(title, body, 0, "익명");
+				Article 게시물1 = new Article(title, body, 0, "익명", "test");
 
 				articleDao.addArticle(게시물1);
 			}
@@ -156,8 +156,7 @@ public class Test {
 						if (rCmdNo == 1) {
 							System.out.print("댓글 내용을 입력해주세요 : ");
 							String replyBody = sc.nextLine();
-							Reply re = new Reply(article.getId(), replyBody, "익명");
-
+							Reply re = new Reply(article.getId(), replyBody, loginedMember.getMemberName(), loginedMember.getMemberId());
 							articleDao.addReply(re);
 							System.out.println("댓글이 등록되었습니다.");
 

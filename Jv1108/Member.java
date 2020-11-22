@@ -8,7 +8,6 @@ public class Member {
 	public Member(String memberId, String memberPw, String memberName) {
 		super();
 		this.memberId = memberId;
-		this.memberPw = memberPw;
 		this.memberName = memberName;
 	}
 

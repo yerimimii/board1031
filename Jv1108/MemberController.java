@@ -6,6 +6,9 @@ public class MemberController {
 	ArrayList<Member> MemberList = new ArrayList<>();
 	Scanner sc = new Scanner(System.in);
 	Member loginedMember = null;
+	public Member getLoginedMember() {
+		return this.loginedMember;
+	}
 	
 	public void doCommand(String cmd) {
 		if (cmd.equals("signup")) {

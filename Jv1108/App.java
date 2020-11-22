@@ -1,5 +1,4 @@
 package Jv1108;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,13 +8,14 @@ public class App {
 	MemberController mc = new MemberController();
 	
 	Scanner sc = new Scanner(System.in);
-
+	
 	public void start() {
 		Scanner sc = new Scanner(System.in);
-		Member loginedMember = null;
-
+		
 		while (true) {
-			Member loginedmember = mc.getloginedMember();
+			
+			Member loginedMember = mc.getloginedMember();
+			ac.setLoginedMember(loginedMember);
 			
 			if (loginedMember == null) {
 				System.out.print("명령어를 입력해주세요:");
@@ -30,30 +30,22 @@ public class App {
 				System.out.println("종료");
 				break;
 			}
-
-			if (cmd.equals("add")) {
-				ac.addArticle();
+			String[] cmdBits = cmd.split(" ");
+			
+			if(cmdBits.length < 2) {
+				System.out.println("잘못된 명령어 입니다.");
+				continue;
 			}
-
-			if (cmd.equals("list")) {
-				ac.printArticleList();
+			String module = cmdBits[0];
+			String func = cmdBits[1];
+			
+			if(module.equals("article")) {
+				ac.doCommand(func);
+			} else {
+				mc.doCommand(func);
 			}
+				
 
-			if (cmd.equals("update")) {
-				ac.updateArticle();
-			}
-
-			if (cmd.equals("delete")) {
-				ac.deleteArticle();
-			}
-
-			if (cmd.equals("read")) {
-				ac.readArticle();
-			}
-
-			if (cmd.equals("search")) {
-				ac.searchArticle();
-			}
 			
 			if (cmd.equals("signup")) {
 				mc.memberSignUp();

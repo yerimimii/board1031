@@ -8,6 +8,7 @@ import Jv1108.Article;
 public class ArticleDao {
 	private ArrayList<Article> ArticleList = new ArrayList<>();
 	private ArrayList<Reply> ReplyList = new ArrayList<>();
+	private ArrayList<Like> LikeList = new ArrayList<>();
 	int id = 4;
 
 	public String getCurrentDate() {
@@ -20,14 +21,27 @@ public class ArticleDao {
 	public void init() {
 		getCurrentDate();
 		
-		Article 게시물a = new Article(1, "안녕하세요", "반갑습니다.", getCurrentDate(), 0, "홍길동");
-		Article 게시물b = new Article(2, "제목2", "내용2", getCurrentDate(), 0, "홍길순");
-		Article 게시물c = new Article(3, "제목3", "내용3", getCurrentDate(), 0, "홍홍홍");
+		Article 게시물a = new Article(1, "안녕하세요", "반갑습니다.", getCurrentDate(), 0, "홍길동", "h123");
+		Article 게시물b = new Article(2, "제목2", "내용2", getCurrentDate(), 0, "홍길순", "h23");
+		Article 게시물c = new Article(3, "제목3", "내용3", getCurrentDate(), 0, "홍홍홍", "h33");
 
 		ArticleList.add(게시물a);
 		ArticleList.add(게시물b);
 		ArticleList.add(게시물c);
 	}
+//	public boolean isExistLikeByParentIdAndMemberId(int parentId, String memberLoginId) {
+//		for(int i = 0; i < LikeList.size(); i++) {
+//			if(LikeList.get(i).getParentId() == (parentId) && LikeList.get(i).getCheckMemberId().equals(memberLoginId)) {
+//				return true;
+//			} 
+//		} return false;
+//	}
+	
+	public void addLike(Like like) {
+		like.setRegDate(getCurrentDate());
+		LikeList.add(like);
+	}	
+	
 
 	public void addReply(Reply reply) {
 		reply.setRegDate(getCurrentDate());

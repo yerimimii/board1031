@@ -4,22 +4,31 @@ public class Reply {
 	private int parentId;
 	private String body;
 	private String writer;
+	private String writerId;
 	private String regDate;
 
-	// 생성자 Alt + s + a
-	public Reply(int parentId, String body, String writer, String regDate) {
+	public Reply(int parentId, String body, String writer, String writerId) {
 		super();
 		this.parentId = parentId;
 		this.body = body;
 		this.writer = writer;
-		this.regDate = regDate;
+		this.writerId = writerId;
 	}
 
-	public Reply(int parentId, String body, String writer) {
+	public Reply(int parentId, String body, String writer, String regDate, String writerId) {
 		super();
 		this.parentId = parentId;
 		this.body = body;
 		this.writer = writer;
+		this.writerId = writerId;
+	}
+
+	public String getWriterId() {
+		return writerId;
+	}
+
+	public void setWriterId(String writerId) {
+		this.writerId = writerId;
 	}
 
 	public int getParentId() {
